@@ -128,7 +128,7 @@ describe('Lottery Contract', () => {
         assert.strictEqual(buyers.length, 0);
     });
 
-    it('should not able to draw lottery until someone buy them', async () => {
+    it('should not able to draw lottery until someone buys them', async () => {
         try {
             await lottery.methods.draw().send({
                 from: accounts[0],

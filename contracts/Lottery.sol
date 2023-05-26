@@ -22,7 +22,7 @@ contract Lottery {
     }
 
     function draw() public  restricted {
-        require(buyers.length > 1, 'You can not draw without someone buys the lottery');
+        require(buyers.length > 1, 'you can not to draw lottery until someone buys them');
         address payable winner = buyers[random() % buyers.length];
         winner.transfer(address(this).balance);
         buyers = new address payable[](0);
