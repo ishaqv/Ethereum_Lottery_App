@@ -22,10 +22,10 @@ contract Lottery {
     }
 
     function draw() public  restricted {
-        address payable winner = buyers[ random() % buyers.length];
+        require(buyers.length > 1, 'You can not draw without someone buys the lottery');
+        address payable winner = buyers[random() % buyers.length];
         winner.transfer(address(this).balance);
         buyers = new address payable[](0);
-
     }
 
     function getBuyers() public view returns (address payable[] memory) {

@@ -30,9 +30,7 @@ describe('Lottery Contract', () => {
             });
         }
 
-        const buyers = await lottery.methods.getBuyers().call({
-            from: accounts[0],
-        });
+        const buyers = await lottery.methods.getBuyers().call();
 
         assert.strictEqual(buyers[0], accounts[1]);
         assert.strictEqual(buyers[1], accounts[2]);
@@ -128,5 +126,16 @@ describe('Lottery Contract', () => {
         });
 
         assert.strictEqual(buyers.length, 0);
+    });
+
+    it('should not able to draw lottery until someone buy them', async () => {
+        try {
+            await lottery.methods.draw().send({
+                from: accounts[0],
+            });
+            assert.fail('Expected revert not received');
+        } catch (error) {
+            assert.strictEqual(error.message.includes('Transaction has been reverted by the EVM'), true);
+        }
     });
 });
