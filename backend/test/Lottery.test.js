@@ -26,7 +26,7 @@ describe('Lottery Contract', () => {
         for (let i=1;i<4;i++) {
             await lottery.methods.buy().send({
                 from: accounts[i],
-                value: web3.utils.toWei('1', 'ether'),
+                value: web3.utils.toWei('10000000', 'gwei'),
             });
         }
 
@@ -39,7 +39,7 @@ describe('Lottery Contract', () => {
         assert.strictEqual(buyers.length, 3);
     });
 
-    it('buyer should spend 1 ETH to buy', async () => {
+    it('buyer should spend 0.01 ETH to buy', async () => {
         try {
             await lottery.methods.buy().send({
                 from: accounts[1],
@@ -51,23 +51,23 @@ describe('Lottery Contract', () => {
         }
     });
 
-    it('should set the ticket price to 2 ETH', async () => {
-        let newPrice = BigInt(web3.utils.toWei('2', 'ether'));
+    it('should set the ticket price to 0.02 ETH', async () => {
+        let newPrice = BigInt(web3.utils.toWei('20000000', 'gwei'));
         await lottery.methods.setTicketPrice(newPrice).send({
             from: accounts[0],
         });
         const updatedPrice = parseInt(await lottery.methods.getTicketPrice().call());
-        assert.strictEqual(updatedPrice, 2);
+        assert.strictEqual(updatedPrice, 20000000);
     });
 
     it('should not be able to change the ticket price in the middle of a lottery', async () => {
         await lottery.methods.buy().send({
             from: accounts[2],
-            value: web3.utils.toWei('1', 'ether'),
+            value: web3.utils.toWei('10000000', 'gwei'),
         });
 
         try {
-            let newPrice = BigInt(web3.utils.toWei('2', 'ether'));
+            let newPrice = BigInt(web3.utils.toWei('20000000', 'gwei'));
             await lottery.methods.setTicketPrice(newPrice).send({
                 from: accounts[0],
             });
@@ -80,7 +80,7 @@ describe('Lottery Contract', () => {
 
     it('only the manager should change the ticket price', async () => {
         try {
-            let newPrice = BigInt(web3.utils.toWei('2', 'ether'));
+            let newPrice = BigInt(web3.utils.toWei('20000000', 'gwei'));
             await lottery.methods.setTicketPrice(newPrice).send({
                 from: accounts[2],
             });
@@ -104,7 +104,7 @@ describe('Lottery Contract', () => {
     it('should send money to the winner and resets the buyers array', async () => {
         await lottery.methods.buy().send({
             from: accounts[4],
-            value: web3.utils.toWei('1', 'ether'),
+            value: web3.utils.toWei('10000000', 'gwei')
         });
 
         let buyers = await lottery.methods.getBuyers().call({
@@ -113,9 +113,9 @@ describe('Lottery Contract', () => {
 
         assert.strictEqual(buyers.length, 1);
 
-        const initialBalance = await web3.eth.getBalance(accounts[4]);
-        await lottery.methods.draw().send({ from: accounts[0] });
-        const finalBalance = await web3.eth.getBalance(accounts[4]);
+        const initialBalance = await web3.eth.getBalance(accounts[2]);
+        await lottery.methods.draw().send({ from: accounts[0], gas: '1000000' });
+        const finalBalance = await web3.eth.getBalance(accounts[2]);
 
         const difference = (web3.utils.fromWei(finalBalance) - web3.utils.fromWei(initialBalance));
 
@@ -128,7 +128,7 @@ describe('Lottery Contract', () => {
         assert.strictEqual(buyers.length, 0);
     });
 
-    it('should not able to draw lottery until someone buys them', async () => {
+    it('should not able to draw lottery until someone buys them', async() => {
         try {
             await lottery.methods.draw().send({
                 from: accounts[0],

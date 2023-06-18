@@ -19,7 +19,8 @@ const deploy = async () => {
     const lottery = await new web3.eth.Contract(abi)
         .deploy({ data: '0x' + evm.bytecode.object})
         .send({ from: accounts[0],  gas: 5000000});
-    console.log("Lottery contract deployed to : ", lottery.options.address);
+    console.log("Lottery contract abi : ", JSON.stringify(abi));
+    console.log("Lottery contract deployed to :", lottery.options.address);
     // Finish the deployment process elegantly(to avoid hanging deployment)
     provider.engine.stop();
 };

@@ -2,13 +2,14 @@
 pragma solidity ^0.8.20;
 
 contract Lottery {
-    address private manager;
+    address public manager;
     uint private ticketPrice;
     address payable[] private buyers;
+    address public winner;
 
     constructor() {
         manager = msg.sender;
-        ticketPrice = 1 ether;
+        ticketPrice = 10000000 gwei; // === 0.01 ether
     }
 
     function setTicketPrice (uint price) public restricted {
@@ -23,9 +24,10 @@ contract Lottery {
 
     function draw() public  restricted {
         require(buyers.length > 1, 'you can not to draw lottery until someone buys them');
-        address payable winner = buyers[random() % buyers.length];
-        winner.transfer(address(this).balance);
+        address payable lucky = buyers[random() % buyers.length];
+        lucky.transfer(address(this).balance);
         buyers = new address payable[](0);
+        winner = lucky;
     }
 
     function getBuyers() public view returns (address payable[] memory) {
@@ -33,7 +35,7 @@ contract Lottery {
     }
 
     function getTicketPrice() public view returns (uint) {
-        return ticketPrice / 1 ether;
+        return ticketPrice / 1 gwei;
     }
 
     modifier restricted() {
